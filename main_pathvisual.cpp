@@ -13,7 +13,7 @@ Font font("arial.ttf");
 Text timeText(font);
 
 int num = 60, rows = 60, cols = 60;
-Vector2i startPos(15, 15);  // Default to invalid position
+Vector2i startPos(15, 15);  
 Vector2i endPos(30, 30); 
 int grid[60][60];       //map with obstacle
 const int cellSize = 800 / 60;
@@ -44,7 +44,7 @@ void showPath(RenderWindow& window) {
                     cell.setFillColor(Color::Yellow); // Shortest path
                 }
                 else if(grid[i][j] == 4) {
-                    cell.setFillColor(Color(255, 165, 0));
+                    cell.setFillColor(Color(255, 165, 0)); // Slow cell
                 }
                 else {
                     cell.setFillColor(Color::White); // empty cell
@@ -80,7 +80,7 @@ void BFS(RenderWindow& window) {
                     parent[newX][newY] = current;
                     q.push({newX, newY});
             
-                    // Visualize visited cells
+                    // visited cell mark blue
                     if(grid[newX][newY] != 4) grid[newX][newY] = 3;
                     showPath(window);
                     // Break out if we reach the endpoint
@@ -124,7 +124,7 @@ bool DFS(int x, int y, vector<vector<bool>>& visited, vector<vector<sf::Vector2i
         if (nx >= 0 && nx < rows && ny >= 0 && ny < cols && grid[nx][ny] != 1 && !visited[nx][ny]) {
             parent[nx][ny] = {x, y}; // Track the path
             if (DFS(nx, ny, visited, parent, window)) {
-                return true; // Stop recursion if endpoint is reached
+                return true; // Stopping recursion if endpoint is reached
             }
         }
     }
@@ -162,7 +162,7 @@ void Dijkstra(RenderWindow& window) {
         auto [currentDist, x, y] = pq.top();
         pq.pop();
 
-        // If we have reached the end, stop the search
+        // If we have reached the end, we will stop the search
         if (x == endPos.x && y == endPos.y) {
             break;
         }
@@ -173,7 +173,7 @@ void Dijkstra(RenderWindow& window) {
             int newY = y + dy;
 
             if (newX >= 0 && newY >= 0 && newX < rows && newY < cols && grid[newX][newY] != 1) { 
-                int newDist = currentDist + (grid[newX][newY] == 4 ? 3 : 1); // slow cell takes more time (3)
+                int newDist = currentDist + (grid[newX][newY] == 4 ? 3 : 1); // slow cell takes more time (+3)
 
                 if (newDist < dist[newX][newY]) {
                     dist[newX][newY] = newDist;
@@ -183,12 +183,11 @@ void Dijkstra(RenderWindow& window) {
                 }
             }
         }
-
-        // Visualization delay (optional)
-        showPath(window); // Refresh the grid visualization
+        // visualzing the path here :)
+        showPath(window); 
     }
 
-    // Reconstruct and display the path (if there is one)
+    // Showing the correct path retracing it using parent
     Vector2i current = endPos;
     while (parent[current.x][current.y] != Vector2i(-1, -1)) {
         grid[current.x][current.y] = 2; // Mark shortest path (green or any other color)
@@ -280,10 +279,7 @@ int main() {
     
     for(int i = 0; i < 60; i++) {
         for(int j = 0; j < 60; j++) {
-            if(i == 0 or i == 59 or j == 0 or j == 59)  // walls
-                grid[i][j] = 0;
-            else
-                grid[i][j] = 0;
+            grid[i][j] = 0;
         }
     }
     
@@ -382,7 +378,7 @@ int main() {
                     grid[i][j] = 0; // Reset all cells to empty
                 }
             }
-            // Optionally reset start and end positions
+            // Reseting start and end positions
             startPos = {15, 15};
             endPos = {30, 30};
 
@@ -391,10 +387,10 @@ int main() {
         }
         
         if (Keyboard::isKeyPressed(Keyboard::Key::Y)) {
-            // Reset grid to default state
+            
             for (int i = 0; i < rows; ++i) {
                 for (int j = 0; j < cols; ++j) {
-                    if(grid[i][j] == 2 or grid[i][j] == 3) grid[i][j] = 0; // Reset all cells to empty
+                    if(grid[i][j] == 2 or grid[i][j] == 3) grid[i][j] = 0; 
                 }
             }
             // Update the grid visually
